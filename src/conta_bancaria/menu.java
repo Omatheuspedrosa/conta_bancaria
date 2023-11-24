@@ -2,9 +2,11 @@ package conta_bancaria;
 
 import java.io.IOException;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import conta_bancaria.controller.ContaController;
+import conta_bancaria.model.Conta;
 import conta_bancaria.model.ContaCorrente;
 import conta_bancaria.model.ContaPoupanca;
 import conta_bancaria.util.Cores;
@@ -32,7 +34,7 @@ public class menu {
 
 		while (continuar == true) {
 
-			System.out.println(Cores.ANSI_BLACK_BACKGROUND + Cores.TEXT_BLUE
+			System.out.println(Cores.TEXT_CYAN
 					+ "*****************************************************");
 			System.out.println("                                                     ");
 			System.out.println("                BANCO DO BRAZIL COM Z                ");
@@ -62,12 +64,12 @@ public class menu {
 
 			if (opcao == 9) {
 				continuar = false;
-				System.out.println(Cores.TEXT_BLUE + "Consulta finalizada!");
+				System.out.println(Cores.TEXT_CYAN + "Consulta finalizada!");
 				sobre();
 			}
 
 			switch (opcao) {
-			case 1:System.out.println(Cores.TEXT_BLUE + "Criar Conta\n");
+			case 1:System.out.println(Cores.TEXT_CYAN + "Criar Conta\n");
 
 				System.out.println("Digite o número da Agência: ");
 				agencia = leia.nextInt();
@@ -98,13 +100,13 @@ public class menu {
 				
 
 			case 2: 
-				System.out.println(Cores.TEXT_BLUE + "Listar Todas as Contas\n: ");
+				System.out.println(Cores.TEXT_CYAN + "Listar Todas as Contas\n: ");
 					contas.listarTodas();
 				keyPress();
 				break;
 
 			case 3: 
-				System.out.println(Cores.TEXT_BLUE + "Buscar Conta por Número\n");
+				System.out.println(Cores.TEXT_CYAN + "Buscar Conta por Número\n");
 				
 				System.out.println("Digite o número da conta: ");
 				numero = leia.nextInt();
@@ -115,12 +117,48 @@ public class menu {
 				break;
 
 			case 4: 
-				System.out.println(Cores.TEXT_BLUE + "Atualizador Dados da Conta\n");
+				System.out.println(Cores.TEXT_CYAN + "Atualizador Dados da Conta\n");
+				
+				System.out.println("Digite o número da conta: ");
+				numero = leia.nextInt();
+				
+				Optional<Conta> conta = contas.buscarNaCollection(numero);
+				
+				if(conta.isPresent()) {
+					
+					System.out.println("Digite o número da Agência: ");
+					agencia = leia.nextInt();
+
+					System.out.println("Digite o nome do titular: ");leia.skip("\\R");
+					titular = leia.nextLine();
+
+					tipo = conta.get().getTipo();
+					
+					System.out.println("Digite o Saldo da Conta:");
+					saldo = leia.nextFloat();
+					
+					switch(tipo) {
+					case 1 -> {
+						System.out.println("Digite o limite da conta: ");
+						limite = leia.nextFloat();
+						contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+					}
+					case 2 -> {
+						System.out.println("Digite o dia do aniversário da conta: ");
+						aniversario = leia.nextInt();
+						contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
+					}
+					
+					}
+				
+				}else
+					System.out.println("A Conta número: " + numero + " não foi encontrada!");
+				
 				keyPress();
 				break;
 
 			case 5: 
-				System.out.println(Cores.TEXT_BLUE + "Apagar Conta\n");
+				System.out.println(Cores.TEXT_CYAN + "Apagar Conta\n");
 				
 				System.out.println("Digite o número da conta: ");
 				numero = leia.nextInt();
@@ -131,17 +169,17 @@ public class menu {
 				break;
 
 			case 6: 
-				System.out.println(Cores.TEXT_BLUE + "Sacar\n");
+				System.out.println(Cores.TEXT_CYAN + "Sacar\n");
 				keyPress();
 				break;
 
 			case 7: 
-				System.out.println(Cores.TEXT_BLUE + "Depositar\n");
+				System.out.println(Cores.TEXT_CYAN + "Depositar\n");
 				keyPress();
 				break;
 
 			case 8: 
-				System.out.println(Cores.TEXT_BLUE + "Transferir Valores entre Contras\n");
+				System.out.println(Cores.TEXT_CYAN + "Transferir Valores entre Contras\n");
 				keyPress();
 				break;
 				

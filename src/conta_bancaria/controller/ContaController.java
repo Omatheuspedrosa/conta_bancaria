@@ -1,6 +1,7 @@
 package conta_bancaria.controller;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import conta_bancaria.model.Conta;
 import conta_bancaria.repository.ContaRepository;
@@ -15,10 +16,10 @@ public class ContaController implements ContaRepository {
 
 	@Override
 	public void procurarPorNumero(int numero) {
-		var conta = buscarNaCollection(numero);
+		Optional<Conta> conta = buscarNaCollection(numero);
 
-		if (conta != null)
-			conta.visualizar();
+		if (conta.isPresent())
+			conta.get().visualizar();
 		else
 			System.out.println("A conta número: " + numero + " não foi encontrada");
 	}
@@ -40,16 +41,23 @@ public class ContaController implements ContaRepository {
 
 	@Override
 	public void atualizar(Conta conta) {
-		// TODO Auto-generated method stub
+		
+		Optional<Conta> buscaConta = buscarNaCollection(conta.getNumero());
+		
+		if(buscaConta.isPresent()) {
+			listaContas.set(listaContas.indexOf(buscaConta.get()), conta);
+			System.out.println("A Conta número: " + numero + " foi atualizada com sucesso!");
+		}else
+			System.out.println("A Conta número: " + conta.getNumero() + " não foi encontrada");
 
 	}
 
 	@Override
 	public void deletar(int numero) {
-		var conta = buscarNaCollection(numero);
+		Optional<Conta> conta = buscarNaCollection(numero);
 
-		if (conta != null)
-			if(listaContas.remove(conta) == true)
+		if (conta.isPresent())
+			if(listaContas.remove(conta.get()) == true)
 				System.out.println("Conta número: " + numero + " excluída com sucesso!");
 		else
 			System.out.println("A conta número: " + numero + " não foi encontrada");
@@ -79,13 +87,13 @@ public class ContaController implements ContaRepository {
 		return ++numero;
 	}
 
-	public Conta buscarNaCollection(int numero) {
+	public Optional<Conta> buscarNaCollection(int numero) {
 		for (var conta : listaContas) {
 			if (conta.getNumero() == numero)
-				return conta;
+				return Optional.of(conta);
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 }
